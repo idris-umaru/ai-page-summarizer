@@ -132,12 +132,8 @@ Implemented:
 - Background service worker with message validation, summary cache, and proxy calls.
 - Optional in-page key point highlighting.
 - Local Node proxy that keeps the Gemini API key outside extension code.
-
-Still recommended before final submission:
-
 - Add extension icons.
-- Test on several real article pages.
-- Record the 2 to 5 minute demo video.
+- Test on several real article pages..
 - Optionally improve extraction with Mozilla Readability or another parser.
 
 
