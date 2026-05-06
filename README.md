@@ -1,6 +1,6 @@
 # AI Page Summarizer Chrome Extension
 
-Stage 4A project scaffold for a Manifest V3 Chrome Extension that extracts readable page content, sends it to an AI backend/provider, and displays a structured summary in a popup.
+Stage 4A Manifest V3 Chrome Extension that extracts readable page content, sends it to a local Gemini AI proxy, and displays a structured summary in a popup.
 
 ## What This Project Is Expected To Do
 
@@ -29,19 +29,19 @@ The safe options are:
 
 Do not hardcode or commit secrets.
 
-## Planned Architecture
+## Current Architecture
 
 ```text
 extension/
-  manifest.json          # Manifest V3 config
-  background/            # service worker and AI request coordination
-  content/               # page extraction and optional highlighting
-  popup/                 # popup HTML/CSS/JS
-  styles/                # shared extension styles
-  assets/                # icons and images
+  manifest.json                    # Manifest V3 config
+  background/service-worker.js      # message routing, cache, content injection, AI proxy calls
+  content/content-script.js         # readable text extraction and highlighting
+  popup/popup.html                  # popup UI
+  popup/popup.js                    # popup behavior
+  styles/popup.css                  # popup styling
 
 server/
-  # Optional local proxy for secure AI API calls
+  server.js                         # local AI proxy
 
 docs/
   PROJECT_PLAN.md        # milestone checklist
@@ -57,6 +57,7 @@ Popup
 Background service worker
   -> checks chrome.storage cache
   -> asks content script for readable page content
+  -> injects the content script into eligible active tabs if needed
   -> sends content to secure AI endpoint or proxy
   -> stores result in chrome.storage
   -> returns summary to popup
@@ -66,41 +67,85 @@ Content script
   -> optionally receives highlight instructions
 ```
 
-## Setup Plan
+## Local Setup
 
-Implementation has not started yet. This repository currently contains the structure and planning docs only.
+### 1. Configure the Gemini AI proxy
 
-Recommended next steps:
+Create a `.env` file in the repo root:
 
-1. Add Manifest V3 files.
-2. Build popup UI shell.
-3. Add content extraction script.
-4. Add background message handling.
-5. Add secure AI integration through a backend/proxy.
-6. Add summary caching with `chrome.storage`.
-7. Polish accessibility, error handling, and README demo instructions.
+```text
+GEMINI_API_KEY=your-gemini-api-key-here
+GEMINI_MODEL=gemini-2.5-flash-lite
+GEMINI_FALLBACK_MODELS=gemini-2.5-flash
+PORT=8787
+```
 
-## Local Installation Steps
+`.env` is ignored by git. Do not commit it.
 
-Once implementation is added:
+You can create a Gemini API key in Google AI Studio, then paste it into `.env`.
+
+### 2. Start the local proxy
+
+This project does not require npm packages for the current server.
+
+```powershell
+npm start
+```
+
+The proxy should start at:
+
+```text
+http://localhost:8787
+```
+
+### 3. Download or clone this repository
+
+From GitHub, either:
+
+- Click `Code` -> `Download ZIP`, then unzip the project.
+- Or clone it with git:
+
+```powershell
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+cd YOUR_REPO_NAME
+```
+
+### 4. Install the extension locally
 
 1. Open Chrome.
 2. Go to `chrome://extensions`.
 3. Enable `Developer mode`.
 4. Click `Load unpacked`.
 5. Select the `extension` folder from this repository.
-6. Pin the extension and test it on article pages.
+6. Pin the extension.
+7. Open an article page and click `Summarize Page`.
 
 This extension is intended for local installation only and should not be uploaded to the Chrome Web Store for this assignment.
 
-## Demo Video Guidance
+## Implementation Status
 
-The submission asks for a short demo video, usually 2 to 5 minutes. Show:
+Implemented:
 
-- Loading the unpacked extension.
-- Opening an article page.
-- Clicking `Summarize Page`.
-- Seeing loading, summary, key insights, and reading time.
-- Showing cache behavior by summarizing the same page again.
-- Briefly explaining that API keys are kept out of frontend extension code.
+- Manifest V3 extension setup.
+- Popup UI with loading, clear, copy, summary length, cache badge, error state, and focus styles.
+- Content script with readable page extraction heuristics.
+- Background service worker with message validation, summary cache, and proxy calls.
+- Optional in-page key point highlighting.
+- Local Node proxy that keeps the Gemini API key outside extension code.
 
+Still recommended before final submission:
+
+- Add extension icons.
+- Test on several real article pages.
+- Record the 2 to 5 minute demo video.
+- Optionally improve extraction with Mozilla Readability or another parser.
+
+
+
+## Trade-Offs
+
+- The extension uses vanilla JavaScript so Chrome can load it directly without a build step.
+- The AI call goes through `localhost:8787`, which keeps the Gemini API key out of the extension but requires the proxy server to be running.
+- Content extraction uses heuristics instead of a full readability parser to avoid dependencies in the first working version.
+- The extension requests `activeTab`, `scripting`, `storage`, and local proxy host access only.
+- The local proxy restricts browser CORS responses to Chrome extension origins and localhost.
