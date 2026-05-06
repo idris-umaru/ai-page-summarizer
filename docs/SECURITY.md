@@ -14,18 +14,19 @@ Files that must never contain secrets:
 
 ## Recommended AI Integration
 
-Use a backend/proxy service for AI requests.
+Use a backend/proxy service for AI requests. This repo includes a local proxy at `server/server.js`.
 
 The extension sends extracted page content to the proxy. The proxy owns the real AI API key through environment variables and returns only the summary result.
 
 ## Chrome Extension Security Decisions
 
 - Request the smallest permission set needed.
-- Use `activeTab` where possible instead of broad host permissions.
+- Use `activeTab` and `scripting` for current-tab access instead of broad page host permissions.
 - Validate messages received by the background service worker.
 - Sanitize text before rendering in the popup.
 - Use `textContent` or safe DOM construction instead of injecting raw HTML.
 - Cache only summary data needed for the extension experience.
+- Restrict local proxy CORS responses to Chrome extension origins and localhost development origins.
 
 ## Data Handling Trade-Offs
 
@@ -37,4 +38,3 @@ Avoid sending:
 - private account pages
 - financial or medical records
 - pages with sensitive personal data
-

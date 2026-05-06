@@ -165,7 +165,7 @@ async function sendHighlightMessage(tabId, insights) {
       payload: { phrases: insights }
     });
   } catch (error) {
-    // Highlighting is optional, so summary delivery should not fail when a page blocks it.
+    // summary delivery should not fail when a page blocks it.
   }
 }
 
