@@ -21,26 +21,6 @@ The extension is designed for local development and demo use. It keeps AI creden
 - Node.js 18 or newer.
 - A Gemini API key from Google AI Studio.
 
-### 2. Configure environment variables
-
-Create a `.env` file in the repository root:
-
-```text
-GEMINI_API_KEY=your-gemini-api-key-here
-GEMINI_MODEL=gemini-2.5-flash-lite
-GEMINI_FALLBACK_MODELS=gemini-2.5-flash
-PORT=8787
-```
-
-`.env` is ignored by git. Do not commit API keys or other secrets.
-
-You can also copy the example file first:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Then edit `.env` with your real Gemini API key.
 
 ### 3. Start the local AI proxy
 
