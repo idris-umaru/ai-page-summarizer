@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "AI Page Summarizer",
+  "description": "Summarize readable page content with an AI-backed local proxy.",
+  "version": "0.1.0",
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Summarize this page"
+  },
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content/content-script.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["http://localhost:8787/*"]
+}
